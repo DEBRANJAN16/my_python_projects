@@ -8,6 +8,8 @@ playing = True
 
 # Now step 2 is for creating the class
 
+#  mldflmgkldrmglrdlg
+
 class Card:
     def __init__(self,suit,rank):
         self.suit = suit
