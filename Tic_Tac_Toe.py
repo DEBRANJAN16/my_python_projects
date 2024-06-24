@@ -56,7 +56,7 @@ def make_move(board, player):
             print("Invalid move, Please enter a number between 0 and 2.")
             continue
 
-        if board[rwo][col] != " ":
+        if board[row][col] != " ":
             print("Cell already taken. Please choose another")
             continue
 
@@ -64,7 +64,7 @@ def make_move(board, player):
         break
 
 
-# Now here comes the making of the main Game ogic to play the Game
+# Now here comes the making of the main Game logic to play the Game
 
 def Play_game():
     board = [[" " for _ in range(3)]for _ in range(3)]
@@ -84,8 +84,8 @@ def Play_game():
             print("It's a draw!")
             break
 
-        current_player = "O" if current_player == "X" else "x"
+        current_player = "O" if current_player == "X" else "X"
 
 # Now lets Play The Game
-if __name__ = "__main__":
+'if __name__ = "__main__":'
     Play_game()
