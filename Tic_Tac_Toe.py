@@ -1,91 +1,120 @@
-import random
+import os
 
+def clear_console():
+    # Clear the console
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-# Function to print the game board
+def display_board(board):
+    clear_console()  # This works in standard Python scripts
+    
+    print('   |   |')
+    print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
+    print('   |   |')
+    print('-----------')
+    print('   |   |')
+    print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
+    print('   |   |')
+    print('-----------')
+    print('   |   |')
+    print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
+    print('   |   |')
 
-def print_board(board):
-    for row in board:
-        print(" | ".join(row))
-        print("-" * 5)
+def player_input():
+    """
+    Function to take the player's input and assign their marker as 'X' or 'O'
+    """
+    marker = ''
+    while not (marker == 'X' or marker == 'O'):
+        marker = input('Player 1: Do you want to be X or O? ').upper()
 
-# Function to check for a win
+    if marker == 'X':
+        return ('X', 'O')
+    else:
+        return ('O', 'X')
 
-def check_win(board, player):
+def place_marker(board, marker, position):
+    board[position] = marker
 
-    # checks for row, column and diagonals
+def win_check(board, mark):
+    return ((board[7] == mark and board[8] == mark and board[9] == mark) or
+            (board[4] == mark and board[5] == mark and board[6] == mark) or
+            (board[1] == mark and board[2] == mark and board[3] == mark) or
+            (board[7] == mark and board[4] == mark and board[1] == mark) or
+            (board[8] == mark and board[5] == mark and board[2] == mark) or
+            (board[9] == mark and board[6] == mark and board[3] == mark) or
+            (board[7] == mark and board[5] == mark and board[3] == mark) or
+            (board[9] == mark and board[5] == mark and board[1] == mark))
 
-    for row in board:
-        if all(s == player for s in row):
-            return True
+def space_check(board, position):
+    return board[position] == ' '
 
+def full_board_check(board):
+    for i in range(1, 10):
+        if space_check(board, i):
+            return False
+    return True
 
-    for col in range(3):
-        if all(row[col] == player for row in board):
-            return True
+def player_choice(board):
+    position = 0
+    while position not in [1,2,3,4,5,6,7,8,9] or not space_check(board, position):
+        position = int(input('Choose your next position: (1-9) '))
+    return position
 
-    if all(board[i][i] == player for i in range(3)):
-        return True
+def replay():
+    return input('Do you want to play again? Enter Yes or No: ').lower().startswith('y')
 
-    if all(board[i][2 - i] == player for i in range(3)):
-        return True
-    return False
+print('Welcome to Tic Tac Toe!')
 
+while True:
+    # Reset the board
+    the_board = [' '] * 10
+    player1_marker, player2_marker = player_input()
+    turn = 'Player 1'
+    print(turn + ' will go first.')
 
-# Now the function is to check for a draw
+    play_game = input('Are you ready to play? Enter Yes or No.').lower().startswith('y')
 
-def check_draw(board):
-    return all(cell != " " for row in board for cell in row)
+    if play_game:
+        game_on = True
+    else:
+        game_on = False
 
+    while game_on:
+        if turn == 'Player 1':
+            # Player 1 Turn
+            display_board(the_board)
+            position = player_choice(the_board)
+            place_marker(the_board, player1_marker, position)
 
-# Here comes the function to make a move
+            if win_check(the_board, player1_marker):
+                display_board(the_board)
+                print('Congratulations! You have won the game!')
+                game_on = False
+            else:
+                if full_board_check(the_board):
+                    display_board(the_board)
+                    print('The game is a draw!')
+                    break
+                else:
+                    turn = 'Player 2'
 
-def make_move(board, player):
-    while True:
-        move = input(f"Player {player}, Enter your move (row and column): ").split()
-        if len(move) != 2:
-            print("Invalid input, Please enter Two numbers. ")
-            continue
+        else:
+            # Player 2 Turn
+            display_board(the_board)
+            position = player_choice(the_board)
+            place_marker(the_board, player2_marker, position)
 
-        row, column = move
-        if not (row.isdigit() and col.isdigit()):
-            print("Invalid input, Please enter Number.")
-            continue
+            if win_check(the_board, player2_marker):
+                display_board(the_board)
+                print('Player 2 has won!')
+                game_on = False
+            else:
+                if full_board_check(the_board):
+                    display_board(the_board)
+                    print('The game is a draw!')
+                    break
+                else:
+                    turn = 'Player 1'
 
-        row, column = int(row), int(col)
-        if not (0 <= row < 3 and 0 <= col < 3):
-            print("Invalid move, Please enter a number between 0 and 2.")
-            continue
-
-        if board[row][col] != " ":
-            print("Cell already taken. Please choose another")
-            continue
-
-        board[row][col] = player
+    if not replay():
         break
-
-
-# Now here comes the making of the main Game logic to play the Game
-
-def Play_game():
-    board = [[" " for _ in range(3)]for _ in range(3)]
-    current_player = "X"
-
-    while True:
-        print_board(board)
-        make_move(board, current_player)
-
-        if check_win(board, current_player):
-            print_board(board)
-            print(f"Player {current_player} Wins!")
-            break
-
-        if check_draw(board):
-            print_board(board)
-            print("It's a draw!")
-            break
-
-        current_player = "O" if current_player == "X" else "X"
-
-# Now lets Play The Game
-'if __name__ = "__main__":'
-    Play_game()
